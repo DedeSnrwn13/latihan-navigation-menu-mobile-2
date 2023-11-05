@@ -10,8 +10,37 @@ class PertamaPage extends StatefulWidget {
 }
 
 class _PertamaPageState extends State<PertamaPage> {
-  DateTime? dateTimeNow, dateTimeTomorrow;
+  DateTime? dateTimeNow = DateTime.now(), dateTimeTomorrow, picked_date;
   var year, month, day;
+  TimeOfDay? picked_time, selectedTime = TimeOfDay.now();
+
+  Future<Null> getDate(BuildContext context) async {
+    picked_date = await showDatePicker(
+        context: context,
+        initialDate: dateTimeNow!,
+        firstDate: DateTime(dateTimeNow!.year - 1),
+        lastDate: DateTime(dateTimeNow!.year + 1));
+
+    if (picked_date != null && picked_date != dateTimeNow) {
+      setState(() {
+        dateTimeNow = picked_date;
+      });
+    }
+  }
+
+  Future<Null> getTime(BuildContext context) async {
+    picked_time =
+        await showTimePicker(context: context, initialTime: selectedTime!);
+
+    log(picked_time.toString());
+
+    if (picked_time != null && picked_time != selectedTime) {
+      setState(() {
+        selectedTime = picked_time;
+        log("test " + picked_time.toString());
+      });
+    }
+  }
 
   void dateTime_method() {
     dateTimeNow = new DateTime.now();
@@ -42,18 +71,18 @@ class _PertamaPageState extends State<PertamaPage> {
         children: [
           MaterialButton(
             onPressed: () {
-              dateTime_method();
+              getDate(context);
             },
             child: Text("Test DatePicker"),
           ),
           MaterialButton(
             onPressed: () {
-              null;
+              getTime(context);
             },
             child: Text("Test TimePicker"),
           ),
-          Text("Date"),
-          Text("Time")
+          Text("${dateTimeNow.toString().substring(0, 10)}"),
+          Text("${selectedTime.toString().substring(10, 15)}")
         ],
       ),
     );
